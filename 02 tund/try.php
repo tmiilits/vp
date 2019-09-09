@@ -33,7 +33,7 @@ echo "<h1>" .$username ."koolitöö leht </h1>";
   echo "<p>Lehe avamise hetkel oli " .$partOfDay .
   ".</p>";
   ?>
+  <hr>
 </body)
 
-</body>
 </html>
