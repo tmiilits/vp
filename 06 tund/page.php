@@ -1,5 +1,16 @@
 <?php
-	$userName = "Tauri Miilits";
+	require("../../../config_vp2019.php");
+	require("functions_main.php");
+	require("functions_user.php");
+	$database = "if19_tauri_mi_1";
+	
+	$userName = "Sisselogimata kasutaja";
+	
+	$notice = "";
+	$email = "";
+	$emailError = "";
+	$passwordError = "";
+	
 	$photoDir = "../photos/";
 	$picFileTypes = ["image/jpeg", "image/png"];
 	$weekDayNamesET =["esmaspäev", "teisipäev", "kolmapäev", "neljapäev", "reede", "laupäev", "pühapäev"];
@@ -39,19 +50,19 @@
 		$durationValue = $semesterDuration->format("%r%a");
 		//echo $testValue;
 		//<meter min="0" max="155" value="33"tmii>Väärtus</meter>
-		if($elapsedValue > 0) {
-				$semesterInfoHTML = "<p>Semester on täies hoos: ";
-				$semesterInfoHTML .='<meter min="0" max="' .$durationValue.'" ';
-				$semesterInfoHTML .='value="' .$elapsedValue .'">';
-				$semesterInfoHTML .= round($elapsedValue / $durationValue * 100, 1) ."%";
-				$semesterInfoHTML .= "</meter>";
-				$semesterInfoHTML .="</p>";
+		if($elapsedValue >= 0 and $elapsedValue <= $durationValue){
+			$semesterInfoHTML = "<p>Semester on täies hoos: ";
+			$semesterInfoHTML .= '<meter min="0" max="' .$durationValue .'" ';
+			$semesterInfoHTML .= 'value="' .$elapsedValue .'">';
+			$semesterInfoHTML .= round($elapsedValue / $durationValue * 100, 1) ."%";
+			$semesterInfoHTML .="</meter>";
+			$semesterInfoHTML .="</p>";
 		}
-		elseif ($elapsedValue < 0) {
-							$semesterInfoHTML = "<p>Semester pole veel alanud!";
+		if($elapsedValue < 0){
+			$semesterInfoHTML = "<p>Semester pole veel alanud.</p>";
 		}
-	 	else ($elapsedValue > $durationValue) {
-							$semesterInfoHTML = "<p>Semester on läbi saanud!";
+		if($elapsedValue > $durationValue){
+			$semesterInfoHTML = "<p>Semester on läbi!</p>";
 		}
 
 		$kuupaev = "<p>Lehe avamise hetkel oli aeg: " .$weekDayNamesET[$weekDayNow - 1] .", " . $dateNow .". " .$monthNamesET[$monthNow - 1] ." " .$yearNow ." kell " .$TimeNow . "</p>";
@@ -75,7 +86,25 @@
 		//echo $allPhotos[$picNum];
 		$photoFile = $photoDir .$allPhotos[$picNum];
 		$randomImgHTML = '<img src="' .$photoFile .'" alt="TLÜ Terra õppehoone">';
-
+		
+		if(isset($_POST["login"])){
+			if (isset($_POST["email"]) and !empty($_POST["email"])){
+				$email = test_input($_POST["email"]);
+			} else {
+				$emailError = "Palun sisesta kasutajatunnusena e-posti aadress!";
+			}
+	  
+			if (!isset($_POST["password"]) or strlen($_POST["password"]) < 8){
+				$passwordError = "Palun sisesta parool, vähemalt 8 märki!";
+			}
+	  
+			if(empty($emailError) and empty($passwordError)){
+				$notice = signIn($email, $_POST["password"]);
+			} else {
+				$notice = "Ei saa sisse logida!";
+			}
+		}
+		
 		//lisame lehe päise
 		require("header.php");
 ?>
@@ -85,23 +114,34 @@
 	<?php
 			echo "<h1>" .$userName ." koolitöö leht </h1>";
 	?>
-  <p>See leht on loodud koolis õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>
+	<p>See leht on loodud koolis õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>
 	<?php
 			echo $semesterInfoHTML;
 	?>
 
  	<hr>
-  <?php
+	<?php
   		echo $kuupaev;
-  ?>
-  <p>
-  <?php
+	?>
+	<p>
+	<?php
   		echo "<p>Lehe avamise hetkel oli " .$partOfDay . ".</p>";
-  ?>
+	?>
+	<hr>
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+		<label>E-mail (kasutajatunnus):</label><br>
+		<input type="email" name="email" value="<?php echo $email; ?>">&nbsp;<span><?php echo $emailError; ?></span><br>
 
-  <hr>
-  <?php
+		<label>Salasõna:</label><br>
+		<input name="password" type="password">&nbsp;<span><?php echo $passwordError; ?></span><br>
+
+		<input name="login" type="submit" value="Logi sisse">&nbsp;<span><?php echo $notice; ?>
+	</form>
+	<h2>Loo kasutaja</h2>
+	<p>Loo endale meie lehe <a href="newuser.php">kasutajakonto</a></p>
+	<hr>
+	<?php
   		echo $randomImgHTML;
-  ?>
+	?>
 </body)
 </html>

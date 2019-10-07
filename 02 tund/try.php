@@ -4,7 +4,7 @@ $fullTimeNow = date("d.m.Y H:i:s");
 $hourNow = date("H");
 $partOfDay = "hägune aeg";
 if($hourNow < 8) {
-$partOfDay = "varane hommik";	
+$partOfDay = "varane hommik";
 }
 ?>
 
@@ -19,7 +19,7 @@ $partOfDay = "varane hommik";
 <head/>
 <body>
 <?php
-echo "<h1>" .$username ."koolitöö leht </h1>";
+echo "<h1>" .$userName ." koolitöö leht </h1>";
 ?>
   <h1>Tauri koolitöö leht</h1>
   <p>See leht on loodud koolis õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>
